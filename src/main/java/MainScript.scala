@@ -22,7 +22,7 @@ object HelloWorld extends App {
         print(rectangle.toString);
         print("\n")
       }
-      print("\n\n")
+      print("\n")
     }
 
   def isSquadGood(squad :  List[Rectangle]): Boolean ={
