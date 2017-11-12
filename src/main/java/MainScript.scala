@@ -146,7 +146,7 @@ object HelloWorld extends App {
 
   override def main(args: Array[String]) = {
     //  read input file
-    val input = readFile("input.txt");
+    val input = readFile("input/input.txt");
 
 
     //  find answers
