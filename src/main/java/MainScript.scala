@@ -78,40 +78,48 @@ object HelloWorld extends App {
   def findSquadCombinations(squads : List[Squad]) : List[List[Rectangle]] = {
     var result = ListBuffer[List[Rectangle]]();
 
-    for (squadTop <- squads)
+    for (squadTop <- squads) {
+      val flagsUsedRectangles1 = Array.fill(12)(0);
+      squadTop.fillFlags(flagsUsedRectangles1);
       for (squadBot <- squads)
-        if (!squadBot.isContainSquadRect(squadTop))
-          if (squadTop.side4 + squadBot.side1 == 10)
-            for (squadRight <- squads)
-              if (!squadTop.isContainRect(squadRight.rectangle2)
-                & !squadTop.isContainRect(squadRight.rectangle4)
-                & !squadBot.isContainRect(squadRight.rectangle2)
-                & !squadBot.isContainRect(squadRight.rectangle4))
-                if (squadRight.rectangle1 == squadTop.rectangle4
-                  & squadRight.rectangle3 == squadBot.rectangle2)
+        if (squadBot.checkFlags(flagsUsedRectangles1)) {
+          if (squadTop.side4 + squadBot.side1 == 10) {
+            val flagsUsedRectangles2 = flagsUsedRectangles1.clone();
+            squadBot.fillFlags(flagsUsedRectangles2);
+            for (squadRight <- squads) {
+              if (flagsUsedRectangles2(squadRight.rectangle2.number) != 1
+                & flagsUsedRectangles2(squadRight.rectangle4.number) != 1)
+                if (squadRight.rectangle1.number == squadTop.rectangle4.number
+                  & squadRight.rectangle3.number == squadBot.rectangle2.number)
                   if (squadTop.side2 + squadRight.rectangle2.angle1 < 10
-                    & squadBot.side2 + squadRight.rectangle4.angle3 < 10)
-                    for (squadLeft <- squads)
-                      if (!squadTop.isContainRect(squadLeft.rectangle1)
-                        & !squadTop.isContainRect(squadLeft.rectangle3)
-                        & !squadBot.isContainRect(squadLeft.rectangle1)
-                        & !squadBot.isContainRect(squadLeft.rectangle3)
-                        & !squadRight.isContainRect(squadLeft.rectangle1)
-                        & !squadRight.isContainRect(squadLeft.rectangle3))
-                        if (squadLeft.rectangle2 == squadTop.rectangle3
-                          & squadLeft.rectangle4 == squadBot.rectangle1)
-                          if (squadTop.side3 + squadLeft.rectangle1.angle2 < 10
-                            & squadBot.side3 + squadLeft.rectangle3.angle4 < 10)
-                            result += List(         squadTop.rectangle1,  squadTop.rectangle2,
-                              squadLeft.rectangle1, squadLeft.rectangle2, squadRight.rectangle1, squadRight.rectangle2,
-                              squadLeft.rectangle3, squadLeft.rectangle4, squadRight.rectangle3, squadRight.rectangle4,
-                                                    squadBot.rectangle3,  squadBot.rectangle4);
+                    & squadBot.side2 + squadRight.rectangle4.angle3 < 10){
+                    val flagsUsedRectangles3 = flagsUsedRectangles2.clone();
+                    flagsUsedRectangles3(squadRight.rectangle2.number) = 1;
+                    flagsUsedRectangles3(squadRight.rectangle4.number) = 1;
+                    for (squadLeft <- squads) {
+                      if (flagsUsedRectangles3(squadLeft.rectangle1.number) != 1
+                        & flagsUsedRectangles3(squadLeft.rectangle3.number) != 1){
+                          if (squadLeft.rectangle2.number == squadTop.rectangle3.number
+                            & squadLeft.rectangle4.number == squadBot.rectangle1.number)
+                            if (squadTop.side3 + squadLeft.rectangle1.angle2 < 10
+                              & squadBot.side3 + squadLeft.rectangle3.angle4 < 10)
+                              result += List(squadTop.rectangle1, squadTop.rectangle2,
+                                squadLeft.rectangle1, squadLeft.rectangle2, squadRight.rectangle1, squadRight.rectangle2,
+                                squadLeft.rectangle3, squadLeft.rectangle4, squadRight.rectangle3, squadRight.rectangle4,
+                                squadBot.rectangle3, squadBot.rectangle4);
+                      }
+                    }
+              }
+            }
+          }
+        }
+      }
 
     return result.toList;
   }
 
   //  beauty_way_to
-  //  find result combination of 4 squads
+  //  find groups of 4 rectangles that have center = 10 and all sides < 10
   def findSquads_beauty(allRectanglesList: List[Rectangle]) : List[Squad] = {
     val allRectangles = allRectanglesList.to[ListBuffer];
     var result = ListBuffer[Squad]();
@@ -127,10 +135,10 @@ object HelloWorld extends App {
     return result.toList;
   }
 
+
   //  beauty_way_to
-  //  find result combination of 4 squads
-  def findSquads_very_beauty(allRectanglesList: List[Rectangle]) : List[Squad] = {
-    val allRectangles = allRectanglesList.to[ListBuffer];
+  //  find groups of 4 rectangles that have center = 10 and all sides < 10
+  def findSquads_very_beauty(allRectangles: List[Rectangle]) : List[Squad] = {
     var result = ListBuffer[Squad]();
 
     for(rect1 <- allRectangles; rect2 <- allRectangles; rect3 <- allRectangles; rect4 <- allRectangles) {
@@ -150,13 +158,14 @@ object HelloWorld extends App {
 
 
     //  find answers
-    val answers = findSquadCombinations(findSquads(input));
-
+    val squads = findSquads(input);
+    val answers = findSquadCombinations(squads);
 
     //  print all answers
     printOutput(answers);
 
-/*
+    /*
+
     ////// check speed
     val timeBegin = System.currentTimeMillis();
     for (i <- 0 to 0) {
@@ -206,6 +215,6 @@ object HelloWorld extends App {
     println("Elapsed time for findSquads_very_beauty: " + (time3End - time3Begin) + " ms")
     /////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-*/
+    */
   }
 }

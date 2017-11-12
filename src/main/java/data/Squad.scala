@@ -1,5 +1,7 @@
 package data
 
+import scala.collection.mutable.ListBuffer
+
 class Squad (rectangles: List[Rectangle], sides: List[Int]){
   var rectangle1 = rectangles(0);
   var rectangle2 = rectangles(1);
@@ -63,4 +65,24 @@ class Squad (rectangles: List[Rectangle], sides: List[Int]){
     else
       return true
   }
+
+  // Check is Squads rectangles contained in current composition
+  def checkFlags(flagsUsedRectangles: Array[Int]) : Boolean = {
+    if (flagsUsedRectangles(rectangle1.number) != 1
+      & flagsUsedRectangles(rectangle2.number) != 1
+      & flagsUsedRectangles(rectangle3.number) != 1
+      & flagsUsedRectangles(rectangle4.number) != 1)
+      return true
+    else
+      return false
+  }
+
+  // Fill numbers of Squads rectangles that are contained in current composition
+  def fillFlags(flagsUsedRectangles: Array[Int]) : Unit = {
+    flagsUsedRectangles(rectangle1.number) = 1;
+    flagsUsedRectangles(rectangle2.number) = 1;
+    flagsUsedRectangles(rectangle3.number) = 1;
+    flagsUsedRectangles(rectangle4.number) = 1;
+  }
+
 }
