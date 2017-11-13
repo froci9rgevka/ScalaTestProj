@@ -1,6 +1,5 @@
 package data
 
-import scala.collection.mutable.ListBuffer
 
 class Squad (rectangles: List[Rectangle], sides: List[Int]){
   var rectangle1 = rectangles(0);
@@ -30,10 +29,10 @@ class Squad (rectangles: List[Rectangle], sides: List[Int]){
   }
 
   def sidesValid() : Boolean = {
-    if (side1 < 10
-      & side2 < 10
-      & side3 < 10
-      & side4 < 10)
+    if (side1 <= 10
+      & side2 <= 10
+      & side3 <= 10
+      & side4 <= 10)
       return true
     else
       return false

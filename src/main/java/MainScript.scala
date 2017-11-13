@@ -35,28 +35,28 @@ object HelloWorld extends App {
 
     for(rect1 <- allRectangles) {
       for (rect2 <- allRectangles)
-        if (rect1 != rect2) {
+        if (rect1.number != rect2.number) {
           val side1 = rect1.angle2 + rect2.angle1;
-          if (side1 < 10) {
+          if (side1 <= 10) {
             val sum1 = rect1.angle4 + rect2.angle3;
             if (sum1 <= 10)
               for (rect3 <- allRectangles)
-                if (rect1 != rect3
-                  & rect2 != rect3){
+                if (rect1.number != rect3.number
+                  & rect2.number != rect3.number){
                   val side3 = rect1.angle3 + rect3.angle1;
-                  if (side3 < 10) {
+                  if (side3 <= 10) {
                     val sum2 = sum1 + rect3.angle2;
                     if (sum2 <= 10)
                       for (rect4 <- allRectangles)
-                        if (rect1 != rect4
-                          & rect2 != rect4
-                          & rect3 != rect4) {
+                        if (rect1.number != rect4.number
+                          & rect2.number != rect4.number
+                          & rect3.number != rect4.number) {
                           val sum3 = sum2 + rect4.angle1;
                           if (sum3 == 10) {
                             val side2 = rect2.angle4 + rect4.angle2;
-                            if (side2 < 10) {
+                            if (side2 <= 10) {
                               val side4 = rect3.angle4 + rect4.angle3;
-                              if (side4 < 10){
+                              if (side4 <= 10){
                                 val squad = new Squad(
                                   List[Rectangle](rect1, rect2, rect3, rect4),
                                   List[Int](side1, side2, side3, side4));
@@ -84,36 +84,37 @@ object HelloWorld extends App {
       for (squadBot <- squads)
         if (squadBot.checkFlags(flagsUsedRectangles1)) {
           if (squadTop.side4 + squadBot.side1 == 10) {
-            val flagsUsedRectangles2 = flagsUsedRectangles1.clone();
-            squadBot.fillFlags(flagsUsedRectangles2);
-            for (squadRight <- squads) {
-              if (flagsUsedRectangles2(squadRight.rectangle2.number) != 1
-                & flagsUsedRectangles2(squadRight.rectangle4.number) != 1)
-                if (squadRight.rectangle1.number == squadTop.rectangle4.number
-                  & squadRight.rectangle3.number == squadBot.rectangle2.number)
-                  if (squadTop.side2 + squadRight.rectangle2.angle1 < 10
-                    & squadBot.side2 + squadRight.rectangle4.angle3 < 10){
-                    val flagsUsedRectangles3 = flagsUsedRectangles2.clone();
-                    flagsUsedRectangles3(squadRight.rectangle2.number) = 1;
-                    flagsUsedRectangles3(squadRight.rectangle4.number) = 1;
-                    for (squadLeft <- squads) {
-                      if (flagsUsedRectangles3(squadLeft.rectangle1.number) != 1
-                        & flagsUsedRectangles3(squadLeft.rectangle3.number) != 1){
-                          if (squadLeft.rectangle2.number == squadTop.rectangle3.number
-                            & squadLeft.rectangle4.number == squadBot.rectangle1.number)
-                            if (squadTop.side3 + squadLeft.rectangle1.angle2 < 10
-                              & squadBot.side3 + squadLeft.rectangle3.angle4 < 10)
-                              result += List(squadTop.rectangle1, squadTop.rectangle2,
-                                squadLeft.rectangle1, squadLeft.rectangle2, squadRight.rectangle1, squadRight.rectangle2,
-                                squadLeft.rectangle3, squadLeft.rectangle4, squadRight.rectangle3, squadRight.rectangle4,
-                                squadBot.rectangle3, squadBot.rectangle4);
-                      }
-                    }
+          val flagsUsedRectangles2 = flagsUsedRectangles1.clone();
+          squadBot.fillFlags(flagsUsedRectangles2);
+          for (squadRight <- squads) {
+            if (flagsUsedRectangles2(squadRight.rectangle2.number) != 1
+              & flagsUsedRectangles2(squadRight.rectangle4.number) != 1)
+              if (squadRight.rectangle1.number == squadTop.rectangle4.number
+                & squadRight.rectangle3.number == squadBot.rectangle2.number) {
+                if (squadTop.side2 + squadRight.rectangle2.angle1 <= 10
+                  & squadBot.side2 + squadRight.rectangle4.angle3 <= 10){
+                val flagsUsedRectangles3 = flagsUsedRectangles2.clone();
+                flagsUsedRectangles3(squadRight.rectangle2.number) = 1;
+                flagsUsedRectangles3(squadRight.rectangle4.number) = 1;
+                for (squadLeft <- squads) {
+                  if (flagsUsedRectangles3(squadLeft.rectangle1.number) != 1
+                    & flagsUsedRectangles3(squadLeft.rectangle3.number) != 1) {
+                    if (squadLeft.rectangle2.number == squadTop.rectangle3.number
+                      & squadLeft.rectangle4.number == squadBot.rectangle1.number)
+                      if (squadTop.side3 + squadLeft.rectangle1.angle2 <= 10
+                        & squadBot.side3 + squadLeft.rectangle3.angle4 <= 10)
+                        result += List(squadTop.rectangle1, squadTop.rectangle2,
+                          squadLeft.rectangle1, squadLeft.rectangle2, squadRight.rectangle1, squadRight.rectangle2,
+                          squadLeft.rectangle3, squadLeft.rectangle4, squadRight.rectangle3, squadRight.rectangle4,
+                          squadBot.rectangle3, squadBot.rectangle4);
+                  }
+                }
+                }
               }
-            }
+          }
           }
         }
-      }
+    }
 
     return result.toList;
   }
@@ -164,57 +165,57 @@ object HelloWorld extends App {
     //  print all answers
     printOutput(answers);
 
+
     /*
+        ////// check speed
+        val timeBegin = System.currentTimeMillis();
+        for (i <- 0 to 0) {
+          val answers = findSquadCombinations(findSquads(input));
+        }
+        val timeEnd = System.currentTimeMillis();
+        println("Elapsed time for search answers: " + (timeEnd - timeBegin) + " ms \n");
+        /////
 
-    ////// check speed
-    val timeBegin = System.currentTimeMillis();
-    for (i <- 0 to 0) {
-      val answers = findSquadCombinations(findSquads(input));
-    }
-    val timeEnd = System.currentTimeMillis();
-    println("Elapsed time for search answers: " + (timeEnd - timeBegin) + " ms \n");
-    /////
-
-    //  GUI
-    val taskFrame = new TaskFrame(input, answers);
-
+        //  GUI
+        val taskFrame = new TaskFrame(input, answers);
 
 
-    ////////////////////////////////////////////BEAUTY VS SPEED////////////////////////////////////////////
-    ///////////// Check values /////////////
-    val squads1 = findSquads(input);
-    val squads2 = findSquads_beauty(input);
-    val squads3 = findSquads_very_beauty(input);
-    if (squads1 == squads2 & squads2 == squads3) println("Squads are the same.");
 
-    ////////////// Check times /////////////
-    ////// NOT beauty
-    val time1Begin = System.currentTimeMillis();
-    for (i <- 0 to 100) {
-      val squads = findSquads(input);
-    }
-    val time1End = System.currentTimeMillis();
-    println("Elapsed time for findSquads: " + (time1End - time1Begin) + " ms")
-    /////
+        ////////////////////////////////////////////BEAUTY VS SPEED////////////////////////////////////////////
+        ///////////// Check values /////////////
+        val squads1 = findSquads(input);
+        val squads2 = findSquads_beauty(input);
+        val squads3 = findSquads_very_beauty(input);
+        if (squads1 == squads2 & squads2 == squads3) println("Squads are the same.");
 
-    ////// beauty
-    val time2Begin = System.currentTimeMillis();
-    for (i <- 0 to 100) {
-      val squads = findSquads_beauty(input);
-    }
-    val time2End = System.currentTimeMillis();
-    println("Elapsed time for findSquads_beauty: " + (time2End - time2Begin) + " ms")
-    /////
+        ////////////// Check times /////////////
+        ////// NOT beauty
+        val time1Begin = System.currentTimeMillis();
+        for (i <- 0 to 100) {
+          val squads = findSquads(input);
+        }
+        val time1End = System.currentTimeMillis();
+        println("Elapsed time for findSquads: " + (time1End - time1Begin) + " ms")
+        /////
 
-    ////// very beauty
-    val time3Begin = System.currentTimeMillis();
-    for (i <- 0 to 100) {
-      val squads = findSquads_very_beauty(input);
-    }
-    val time3End = System.currentTimeMillis();
-    println("Elapsed time for findSquads_very_beauty: " + (time3End - time3Begin) + " ms")
-    /////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    */
+        ////// beauty
+        val time2Begin = System.currentTimeMillis();
+        for (i <- 0 to 100) {
+          val squads = findSquads_beauty(input);
+        }
+        val time2End = System.currentTimeMillis();
+        println("Elapsed time for findSquads_beauty: " + (time2End - time2Begin) + " ms")
+        /////
+
+        ////// very beauty
+        val time3Begin = System.currentTimeMillis();
+        for (i <- 0 to 100) {
+          val squads = findSquads_very_beauty(input);
+        }
+        val time3End = System.currentTimeMillis();
+        println("Elapsed time for findSquads_very_beauty: " + (time3End - time3Begin) + " ms")
+        /////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        */
   }
 }
